@@ -126,6 +126,34 @@ class FuzzySearchTest extends TestCase
 
     public function test_search_data()
     {
-        //
+        $list = [
+            [
+                'title' => "Old Man's War",
+                'author' => 'John Scalzi',
+            ],
+            [
+                'title' => 'The Lock Artist',
+                'author' => 'Steve Hamilton',
+            ],
+            [
+                'title' => 'HTML5',
+                'author' => 'Remy Sharp',
+            ],
+            [
+                'title' => 'Right Ho Jeeves',
+                'author' => 'P.D Woodhouse',
+            ],
+        ];
+
+        $options = [
+            'keys' => ['title', 'author'],
+            'threshold' => 0.3
+        ];
+
+        $fuse = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
+        $result = $fuse->loadSearchOptions($options)->setUp($list)->search("steve");
+
+        $this->assertCount(1, $result);
+        $this->assertStringContainsString("Steve", $result[0]["item"]["author"]);
     }
 }
