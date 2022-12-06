@@ -71,7 +71,11 @@ class HttpClientTest extends TestCase
 
         $reflection = new ReflectionClass($httpClient);
 
-        $client = $reflection->getProperty("httpClient")->getValue($httpClient);
+        $prop = $reflection->getProperty("httpClient");
+
+        $prop->setAccessible(true);
+
+        $client = $prop->getValue($httpClient);
 
         $this->assertContains("test", $client->getConfig());
     }

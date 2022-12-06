@@ -138,6 +138,7 @@ class Cost extends AbstractApiTarif implements ICost
 
         $formData = [];
         foreach ($props as $prop) {
+            $prop->setAccessible(true);
             if (!is_null($prop->getValue($this))) {
                 $formData[$prop->getName()] = $prop->getValue($this);
             }
