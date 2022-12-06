@@ -17,4 +17,9 @@ abstract class AbstractResponse
         $this->keys = $keys;
         return $this;
     }
+
+    public function getData(): array
+    {
+        return $this->data[$this->getKeys()];
+    }
 }

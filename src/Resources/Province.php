@@ -9,14 +9,18 @@ use Nekoding\Rajaongkir\Utils\Response;
 
 class Province extends AbstractApiResource
 {
+
+    protected $searchKeys = ["province"];
+
     public function find($provinceId): array
     {
-        $url = $this->buildUrl("/province", ['id' => $provinceId]);
-        return $this->request('GET', $url);
+        $url = $this->httpClient->buildUrl("/province", ['id' => $provinceId]);
+        return $this->httpClient->request('GET', $url);
     }
 
     public function search($search): IResponse
     {
-        $res = $this->request("GET", $this->buildUrl("/province"));
+        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/province"));
+        return new Response($res, $this->searchEngine, $search);
     }
 }

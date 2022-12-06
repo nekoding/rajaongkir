@@ -15,10 +15,7 @@ class FuzzySearch implements ISearch
 
     public function setUp(array $data = []): ISearch
     {
-        if (!$this->searchEngine) {
-            $this->searchEngine = new \Fuse\Fuse($data, self::$searchOptions);
-        }
-
+        $this->searchEngine = new \Fuse\Fuse($data, self::$searchOptions);
         return $this;
     }
 

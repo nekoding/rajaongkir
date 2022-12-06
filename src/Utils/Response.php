@@ -8,67 +8,91 @@ use Nekoding\Rajaongkir\Contracts\ISearch;
 class Response extends AbstractResponse implements IResponse
 {
     protected $searchEngine;
-    protected $origin = [];
+    protected $data = [];
     protected $result = [];
 
     protected $searchData = "";
 
-    public function __construct(array $data, ISearch $search, string $searchData, array $searchKeys = [])
+    public function __construct(array $data, ISearch $search, string $searchData)
     {
-        $this->origin = $data;
+        $this->data = $data;
         $this->searchEngine = $search;
         $this->searchData = $searchData;
+    }
 
-        // start search
-        $this->searchEngine::setSearchKeys($searchKeys);
-        $this->result = $this->searchEngine->setUp($data[$this->getKeys()])->search($searchData);
+    private function applyFilter(): array
+    {
+        // add metadata
+        $this->data["query"]["search"] = $this->searchEngine::getSearchKeys();
+
+        // filter data
+        $results = $this->searchEngine->setUp($this->getData())->search($this->searchData);
+
+        $results = array_map(function ($result) {
+            return $result['item'];
+        }, $results);
+
+        return $results;
     }
 
     public function count(): int
     {
-        return count($this->result);
+        $res = $this->applyFilter();
+        return count($res);
     }
 
     public function first(): array
     {
-        $data = $this->origin;
-        $firstData = $this->result[0];
-        $data['results'] = $firstData;
+        $results = $this->applyFilter();
 
-        return $data;
+        if (empty($results)) {
+            $this->data['results'] = [];
+            return $this->data;
+        } 
+
+        // get first data
+        $this->data['results'] = $results[0];
+        return $this->data;
     }
 
     public function last(): array
     {
-        $data = $this->origin;
-        $lastData = $this->result[count($this->result) - 1];
-        $data['results'] = $lastData;
+        $results = $this->applyFilter();
 
-        return $data;
+        if (empty($results)) {
+            $this->data['results'] = [];
+            return $this->data;
+        } 
+
+        // get last data
+        $this->data['results'] = $results[count($results) - 1];
+        return $this->data;
     }
 
     public function nth(int $index): array
     {
-        $data = $this->origin;
-        $lastData = $this->result[$index];
-        $data['results'] = $lastData;
+        $results = $this->applyFilter();
 
-        return $data;
+        if (empty($results) || !isset($results[$index])) {
+            $this->data['results'] = [];
+            return $this->data;
+        } 
+
+        $this->data['results'] = $results[$index];
+        return $this->data;
     }
 
     public function get(): array
     {
-        $data = $this->origin;
-        $data['results'] = $this->result;
+        $results = $this->applyFilter();
 
-        return $data;
+        // append
+        $this->data['results'] = $results;
+        return $this->data;
     }
 
     public function slice(int $start, ?int $length = null): array
     {
-        $data = $this->origin;
-        $data['results'] = array_slice($this->result, $start, $length);
-
-        return $data;
+       return [];
     }
 }

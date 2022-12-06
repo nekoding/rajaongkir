@@ -1,14 +1,41 @@
 <?php
 
 use Nekoding\Rajaongkir\Resources\Province;
+use Nekoding\Rajaongkir\Utils\FuzzySearch;
 
 require "../vendor/autoload.php";
 
-$rajaongkir = new Province("apikey");
-$rajaongkir;
-$result = $rajaongkir->find(123);
+// basic init
+$province = new Province("apikey");
 
-// or
+// init dengan mode api
+$province = new Province("apikey", "starter");
 
-$result = $rajaongkir->search('kalimantan')->get();
-$result = $rajaongkir->search('kalimantan barat')->first();
+// ambil data berdasarkan id provinsi
+$province->find(1); // 
+
+// ambil data berdasarkan nama provinsi (default: province)
+$province->search("bali")->get();
+
+// jika ingin melakukan custom config search
+$province->setSearchKeys(["province"])->setSearchThreshold(20)->search("bali")->get();
+
+// jika inging menampilkan 1 data pertama dari hasil pencarian
+$province->search("kalimantan")->first();
+
+// jika ingin menampilkan 1 data terakhir dari hasil pencarian
+$province->search("kalimantan")->last();
+
+// jika ingin menampilkan semua data pencarian
+$province->search("kalimantan")->get();
+
+// jika ingin menghitung jumlah data yang ditemukan
+$province->search("sumatera")->count();
+
+// jika ingin menampilkan data berdasarkan index tertentu
+$province->search("sumatera")->nth(1);
+
+// jika ingin menampilkan n-n data bedasarkan index data
+// data = ["sulawesi utara, sulawesi barat", "sulawesi selatan"]
+$province->search("sulawesi")->slice(1, 1); // ["sulawesi barat"]
+

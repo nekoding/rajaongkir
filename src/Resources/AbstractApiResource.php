@@ -4,89 +4,29 @@ namespace Nekoding\Rajaongkir\Resources;
 
 use Nekoding\Rajaongkir\Contracts\IResponse;
 use Nekoding\Rajaongkir\Contracts\ISearch;
+use Nekoding\Rajaongkir\Contracts\ISearchOptions;
+use Nekoding\Rajaongkir\Utils\Config;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
+use Nekoding\Rajaongkir\Utils\HttpClient;
 
-abstract class AbstractApiResource
+abstract class AbstractApiResource implements ISearchOptions
 {
-
-    const BASE_URL = 'https://api.rajaongkir.com';
-
-    protected $apikey;
-    protected $mode;
     protected $searchEngine;
     protected $httpClient;
-    protected $httpHandler = [];
-    protected $httpHeader = [
-        'accept' => 'application/json'
-    ];
 
     protected $provinceId;
     protected $result;
+    protected $searchKeys = [];
 
     public function __construct(string $apikey, string $mode = "starter")
     {
-        $this->apikey = $apikey;
-        $this->mode = $mode;
+        Config::setApiKey($apikey);
+        Config::setApiMode($mode);
 
-        // default
         $this->searchEngine = new FuzzySearch();
-        $this->httpClient = new \GuzzleHttp\Client($this->httpHandler);
+        $this->searchEngine::setSearchKeys($this->searchKeys);
 
-        // attach api key
-        $this->setHeader([
-            'key' => $apikey
-        ]);
-    }
-
-    protected function buildUrl(string $endpoint, array $data = []): string
-    {
-
-        if (strpos($endpoint, "/") === 0 || strpos($endpoint, "/") === strlen($endpoint)) {
-            $endpoint = str_replace("/", "", $endpoint);
-        }
-
-        $url = sprintf("%s/%s/%s", self::BASE_URL, $this->mode, $endpoint);
-
-        if (empty($data)) {
-            return $url;
-        }
-
-        $query = http_build_query($data);
-        return sprintf("%s?%s", $url, $query);
-    }
-
-    protected function request(string $httpMethod, $url): array
-    {
-        $req = $this->httpClient->request($httpMethod, $url, [
-            'headers' => $this->getHeader()
-        ]);
-
-        $res = (string) $req->getBody();
-
-        $json = json_decode($res, true);
-
-        if ($json['rajaongkir']['status']['code'] != 200) {
-            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($json['rajaongkir']['status']['description']);
-        }
-
-        return $json['rajaongkir'];
-    }
-
-    public function setHttpHandler(array $handler): self
-    {
-        $this->httpHandler = $handler;
-        return $this;
-    }
-
-    public function setHeader(array $headers): self
-    {
-        $this->httpHeader = array_merge($this->httpHeader, $headers);
-        return $this;
-    }
-
-    public function getHeader(): array
-    {
-        return $this->httpHeader;
+        $this->httpClient = new HttpClient();
     }
 
     public function setSearch(ISearch $search): self
@@ -95,21 +35,20 @@ abstract class AbstractApiResource
         return $this;
     }
 
-    public function setSearchKeys(array $keys): self
+    public function getSearchInstance(): ISearch
+    {
+        return $this->searchEngine;
+    }
+
+    public function setSearchKeys(array $keys): AbstractApiResource
     {
         $this->searchEngine::setSearchKeys($keys);
         return $this;
     }
 
-    public function setSearchThreshold(float $threshold): self
+    public function setSearchThreshold(float $threshold): AbstractApiResource
     {
         $this->searchEngine::setSearchThreshold($threshold);
-        return $this;
-    }
-
-    public function setSearchOptions(array $options): self
-    {
-        $this->searchEngine::setSearchOptions($options);
         return $this;
     }
 
