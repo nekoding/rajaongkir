@@ -16,7 +16,7 @@ composer require nekoding/rajaongkir
 
 ## Usage
 
-Check `examples` folder
+Check `examples` folder or `tests` folder
 
 ### Testing
 
@@ -32,8 +32,8 @@ composer test
 
 ### TODO
 
-- [] Basic API
-- [] Pro API
+- [ ] Basic API
+- [ ] Pro API
 
 ## License
 
