@@ -34,8 +34,3 @@ $province->search("sumatera")->count();
 
 // jika ingin menampilkan data berdasarkan index tertentu
 $province->search("sumatera")->nth(1);
-
-// jika ingin menampilkan n-n data bedasarkan index data
-// data = ["sulawesi utara, sulawesi barat", "sulawesi selatan"]
-$province->search("sulawesi")->slice(1, 1); // ["sulawesi barat"]
-
