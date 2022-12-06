@@ -13,13 +13,23 @@ class City extends AbstractApiResource
     public function find($cityId): array
     {
         $url = $this->httpClient->buildUrl("/city", ["id" => $cityId]);
-        return $this->httpClient->request("GET", $url);
+        $res = $this->httpClient->request("GET", $url)->getBody();
+
+        if ($res['rajaongkir']['status']['code'] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        }
+
+        return $res["rajaongkir"];
     }
 
     public function search($search): IResponse
     {
-        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/city"));
-        return new Response($res, $this->searchEngine, $search);
-    }
+        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/city"))->getBody();
 
+        if ($res['rajaongkir']['status']['code'] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        }
+
+        return new Response($res["rajaongkir"], $this->searchEngine, $search);
+    }
 }

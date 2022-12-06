@@ -5,7 +5,6 @@ namespace Nekoding\Tests;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Mockery;
 use Nekoding\Rajaongkir\Resources\Province;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\HttpClient;
@@ -205,5 +204,22 @@ class ProvinceTest extends TestCase
 
         $this->assertEquals("Bali", $res["results"]["province"]);
     }
-    
+
+    public function test_init_api_with_rajaongkir_wrapper()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ . "/mock/bali.json")),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        HttpClient::setConfig(["handler" => $handlerStack]);
+
+        \Nekoding\Rajaongkir\Utils\Config::setApiKey("api_key");
+        \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
+
+        $result = \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
+
+        $this->assertContains("Bali", $result["results"]);
+    }
 }

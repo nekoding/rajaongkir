@@ -5,13 +5,16 @@ namespace Nekoding\Rajaongkir\Utils;
 class HttpClient
 {
 
-    const BASE_URL = 'https://api.rajaongkir.com';
+    const STARTER_BASE_URL = 'https://api.rajaongkir.com/starter';
+    const BASIC_BASE_URL = "https://api.rajaongkir.com/basic";
+    const PRO_BASE_URL = "https://pro.rajaongkir.com/api";
 
     protected $httpClient;
+    protected $result;
+
     protected static $httpHeader = [
         'accept' => 'application/json'
     ];
-
     protected static $config = [];
     protected static $forms = [];
 
@@ -23,11 +26,31 @@ class HttpClient
     public function buildUrl(string $endpoint, array $data = []): string
     {
 
-        if (strpos($endpoint, "/") === 0 || strpos($endpoint, "/") === strlen($endpoint)) {
-            $endpoint = str_replace("/", "", $endpoint);
+        if (strpos($endpoint, "/") === 0) {
+            $endpoint = trim($endpoint, "/");
         }
 
-        $url = sprintf("%s/%s/%s", self::BASE_URL, Config::getApiMode(), $endpoint);
+        if (strpos($endpoint, "/") === strlen($endpoint) - 1) {
+            $endpoint = rtrim($endpoint, "/");
+        }
+
+        switch (Config::getApiMode()) {
+            case "starter":
+                $url = sprintf("%s/%s", self::STARTER_BASE_URL, $endpoint);
+                break;
+
+            case "basic":
+                $url = sprintf("%s/%s", self::BASIC_BASE_URL, $endpoint);
+                break;
+
+            case "pro":
+                $url = sprintf("%s/%s", self::PRO_BASE_URL, $endpoint);
+                break;
+
+            default:
+                throw new \InvalidArgumentException("api mode only accept starter, basic, or pro");
+                break;
+        }
 
         if (empty($data)) {
             return $url;
@@ -37,7 +60,7 @@ class HttpClient
         return sprintf("%s?%s", $url, $query);
     }
 
-    public function request(string $httpMethod, $url): array
+    public function request(string $httpMethod, $url): self
     {
         $req = $this->httpClient->request($httpMethod, $url, [
             "headers" => array_merge(
@@ -49,18 +72,17 @@ class HttpClient
             "form_params" => self::getFormParams()
         ]);
 
-        $res = (string) $req->getBody();
-
-        $json = json_decode($res, true);
-
-        if ($json['rajaongkir']['status']['code'] != 200) {
-            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($json['rajaongkir']['status']['description']);
-        }
-
-        return $json['rajaongkir'];
+        $this->result = (string) $req->getBody();
+        return $this;
     }
 
-    public static function setConfig($configurations)
+    public function getBody(): array
+    {
+        $json = json_decode($this->result, true);
+        return $json;
+    }
+
+    public static function setConfig(array $configurations)
     {
         self::$config  = $configurations;
     }
@@ -68,6 +90,11 @@ class HttpClient
     public static function getConfig(): array
     {
         return self::$config;
+    }
+
+    public static function resetConfig()
+    {
+        self::$config = [];
     }
 
     public static function setHeader(array $headers)
@@ -78,6 +105,11 @@ class HttpClient
     public static function getHeader(): array
     {
         return self::$httpHeader;
+    }
+
+    public static function resetHeader()
+    {
+        self::$httpHeader = [];
     }
 
     public static function setFormParams(array $data)

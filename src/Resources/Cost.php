@@ -151,7 +151,9 @@ class Cost extends AbstractApiTarif implements ICost
         $reflection = new ReflectionClass($this);
 
         foreach ($data as $key => $value) {
-            $reflection->getProperty($key)->setValue($this, $value);
+            $prop = $reflection->getProperty($key);
+            $prop->setAccessible(true);
+            $prop->setValue($this, $value);
         }
 
         return $this;
@@ -164,6 +166,12 @@ class Cost extends AbstractApiTarif implements ICost
         $url = $this->httpClient->buildUrl("/cost");
 
         $this->httpClient::setFormParams($this->body);
-        return $this->httpClient->request("POST", $url);
+        $res = $this->httpClient->request("POST", $url)->getBody();
+
+        if ($res['rajaongkir']['status']['code'] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        }
+
+        return $res["rajaongkir"];
     }
 }

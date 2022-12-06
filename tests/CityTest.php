@@ -204,4 +204,22 @@ class CityTest extends TestCase
 
         $this->assertEquals("Denpasar", $res["results"]["city_name"]);
     }
+
+    public function test_init_api_with_rajaongkir_wrapper()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ . "/mock/denpasar.json")),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        HttpClient::setConfig(["handler" => $handlerStack]);
+
+        \Nekoding\Rajaongkir\Utils\Config::setApiKey("api_key");
+        \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
+
+        $result = \Nekoding\Rajaongkir\Rajaongkir::city()->find(114);
+
+        $this->assertContains("Denpasar", $result["results"]);
+    }
 }

@@ -6,8 +6,8 @@ class Config
 {
 
     protected static $apiKey;
-    protected static $apiMode;
-    
+    protected static $apiMode = "starter";
+
     /**
      * set rajaongkir api key
      *
@@ -17,8 +17,8 @@ class Config
     public static function setApiKey(string $apiKey)
     {
         self::$apiKey = $apiKey;
-    } 
-        
+    }
+
     /**
      * get rajaongkir api key
      *
@@ -28,7 +28,7 @@ class Config
     {
         return self::$apiKey;
     }
-    
+
     /**
      * set rajaongkir api mode
      *
@@ -39,7 +39,7 @@ class Config
     {
         self::$apiMode = $apiMode;
     }
-    
+
     /**
      * get rajaongkir api mode
      *
@@ -49,5 +49,4 @@ class Config
     {
         return self::$apiMode;
     }
-
 }

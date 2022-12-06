@@ -15,12 +15,23 @@ class Province extends AbstractApiResource
     public function find($provinceId): array
     {
         $url = $this->httpClient->buildUrl("/province", ['id' => $provinceId]);
-        return $this->httpClient->request('GET', $url);
+        $res = $this->httpClient->request('GET', $url)->getBody();
+
+        if ($res['rajaongkir']['status']['code'] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        }
+
+        return $res["rajaongkir"];
     }
 
     public function search($search): IResponse
     {
-        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/province"));
-        return new Response($res, $this->searchEngine, $search);
+        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/province"))->getBody();
+
+        if ($res['rajaongkir']['status']['code'] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        }
+
+        return new Response($res["rajaongkir"], $this->searchEngine, $search);
     }
 }
