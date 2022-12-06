@@ -1,0 +1,45 @@
+{
+    "name": "nekoding/rajaongkir",
+    "description": "Rajaongkir PHP Client Library",
+    "keywords": [
+        "nekoding",
+        "rajaongkir"
+    ],
+    "homepage": "https://github.com/nekoding/rajaongkir",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Enggar Tivandi",
+            "email": "me@enggartivandi.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "loilo/fuse": "^6.6"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.5",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nekoding\\Rajaongkir\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nekoding\\Rajaongkir\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "rajaongkir": {
+    "query": {
+      "id": "1"
+    },
+    "status": {
+      "code": 200,
+      "description": "OK"
+    },
+    "results": {
+      "province_id": "1",
+      "province": "Bali"
+    }
+  }
+}
