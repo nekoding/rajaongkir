@@ -48,7 +48,7 @@ class Response extends AbstractResponse implements IResponse
         if (empty($results)) {
             $this->data['results'] = [];
             return $this->data;
-        } 
+        }
 
         // get first data
         $this->data['results'] = $results[0];
@@ -62,7 +62,7 @@ class Response extends AbstractResponse implements IResponse
         if (empty($results)) {
             $this->data['results'] = [];
             return $this->data;
-        } 
+        }
 
         // get last data
         $this->data['results'] = $results[count($results) - 1];
@@ -76,7 +76,7 @@ class Response extends AbstractResponse implements IResponse
         if (empty($results) || !isset($results[$index])) {
             $this->data['results'] = [];
             return $this->data;
-        } 
+        }
 
         $this->data['results'] = $results[$index];
         return $this->data;
@@ -89,10 +89,5 @@ class Response extends AbstractResponse implements IResponse
         // append
         $this->data['results'] = $results;
         return $this->data;
-    }
-
-    public function slice(int $start, ?int $length = null): array
-    {
-       return [];
     }
 }

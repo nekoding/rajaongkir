@@ -14,6 +14,4 @@ interface IResponse
     public function nth(int $index): array;
 
     public function get(): array;
-
-    public function slice(int $start, int $length = null): array;
 }
