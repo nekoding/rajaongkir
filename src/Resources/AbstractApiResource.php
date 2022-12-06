@@ -14,7 +14,6 @@ abstract class AbstractApiResource implements ISearchOptions
     protected $searchEngine;
     protected $httpClient;
 
-    protected $provinceId;
     protected $result;
     protected $searchKeys = [];
 

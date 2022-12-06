@@ -13,6 +13,7 @@ class HttpClient
     ];
 
     protected static $config = [];
+    protected static $forms = [];
 
     public function __construct()
     {
@@ -39,12 +40,13 @@ class HttpClient
     public function request(string $httpMethod, $url): array
     {
         $req = $this->httpClient->request($httpMethod, $url, [
-            'headers' => array_merge(
+            "headers" => array_merge(
                 self::getHeader(),
                 [
                     'key'   => Config::getApiKey()
                 ]
-            )
+            ),
+            "form_params" => self::getFormParams()
         ]);
 
         $res = (string) $req->getBody();
@@ -76,5 +78,15 @@ class HttpClient
     public static function getHeader(): array
     {
         return self::$httpHeader;
+    }
+
+    public static function setFormParams(array $data)
+    {
+        self::$forms = $data;
+    }
+
+    public static function getFormParams(): array
+    {
+        return self::$forms;
     }
 }
