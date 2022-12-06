@@ -1,0 +1,19 @@
+{
+    "rajaongkir": {
+      "query": {
+        "id": "114"
+      },
+      "status": {
+        "code": 200,
+        "description": "OK"
+      },
+      "results": {
+        "city_id": "114",
+        "province_id": "1",
+        "province": "Bali",
+        "type": "Kota",
+        "city_name": "Denpasar",
+        "postal_code": "80227"
+      }
+    }
+  }
