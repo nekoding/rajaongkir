@@ -18,7 +18,7 @@ composer require nekoding/rajaongkir
 
 ```php
 
-// Menggunakan object resource
+// Menggunakan class resource
 $province = new \Nekoding\Rajaongkir\Resources\Province("api_key_rajaongkir", "api_mode");
 $province->find(1);
 
@@ -27,7 +27,22 @@ $province->find(1);
 \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
 $rajaongkir = new \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
 
+// Jika ingin melakukan pencarian data berdasarkan nama provinsi
+$province = new \Nekoding\Rajaongkir\Resources\Province("api_key_rajaongkir", "api_mode");
+$province->search("bali")->get();
 
+// Jika ingin melakukan pencarian data berdasarkan nama kota
+$city = new \Nekoding\Rajaongkir\Resources\City("api_key_rajaongkir", "api_mode");
+$city->search("denpasar")->get();
+
+// Jika ingin melakukan pengecekan biaya ongkos kirim
+$cost = new \Nekoding\Rajaongkir\Resources\Cost("api_key_rajaongkir", "api_mode");
+$cost->setOrigin(501);
+$cost->setDestination(114);
+$cost->setWeight(1700);
+$cost->setCourier("jne");
+
+$result = $cost->get();
 ```
 
 Untuk contoh lainnya cek folder `examples` atau `tests`
