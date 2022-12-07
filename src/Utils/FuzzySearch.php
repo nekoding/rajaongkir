@@ -3,55 +3,58 @@
 namespace Nekoding\Rajaongkir\Utils;
 
 use Nekoding\Rajaongkir\Contracts\ISearch;
+use Nekoding\Rajaongkir\Contracts\ISearchOptions;
 
-class FuzzySearch implements ISearch
+class FuzzySearch implements ISearch, ISearchOptions
 {
 
-    protected $searchEngine;
-    protected static $searchOptions = [
+    protected $fuse;
+    protected $configurations = [
         "keys"      => [],
         "threshold" => 0.2
     ];
 
     public function setUp(array $data = []): ISearch
     {
-        $this->searchEngine = new \Fuse\Fuse($data, self::$searchOptions);
-        return $this;
-    }
-
-    public static function setSearchOptions(array $options)
-    {
-        self::$searchOptions = $options;
-    }
-
-    public static function getSearchKeys(): array
-    {
-        return self::$searchOptions["keys"];
-    }
-
-    public static function setSearchKeys(array $keys)
-    {
-        self::$searchOptions["keys"] = $keys;
-    }
-
-    public static function getSearchThreshold(): float
-    {
-        return self::$searchOptions["threshold"];
-    }
-
-    public static function setSearchThreshold(float $threshold)
-    {
-        self::$searchOptions["threshold"] = $threshold;
-    }
-
-    public function loadSearchOptions(array $options): ISearch
-    {
-        self::$searchOptions = $options;
+        $this->fuse = new \Fuse\Fuse($data, $this->configurations);
         return $this;
     }
 
     public function search(string $search): array
     {
-        return $this->searchEngine->search($search);
+        return $this->fuse->search($search);
+    }
+
+    public function setKeys(array $keys): ISearchOptions
+    {
+        $this->configurations["keys"] = $keys;
+        return $this;
+    }
+
+    public function getKeys(): array
+    {
+        return $this->configurations["keys"];
+    }
+
+    public function setThreshold(float $threshold): ISearchOptions
+    {
+        $this->configurations["threshold"] = $threshold;
+        return $this;
+    }
+
+    public function getThreshold(): float
+    {
+        return $this->configurations["threshold"];
+    }
+
+    public function setConfig(array $config): ISearch
+    {
+        $this->configurations = $config;
+        return $this;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->configurations;
     }
 }

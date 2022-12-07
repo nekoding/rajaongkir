@@ -1,14 +1,14 @@
 <?php
 
-namespace Nekoding\Tests;
+namespace Nekoding\Tests\Resources;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Nekoding\Rajaongkir\Resources\Province;
-use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class ProvinceTest extends TestCase
 {
@@ -18,17 +18,10 @@ class ProvinceTest extends TestCase
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        // make sure threshold back to default
-        FuzzySearch::setSearchThreshold(0.2);
-    }
-
-
     public function test_get_province_data_by_id()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/bali.json")),
+            new Response(200, [], file_get_contents(__DIR__ .  "/../mock/bali.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -44,7 +37,7 @@ class ProvinceTest extends TestCase
     public function test_search_province_by_name()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -53,13 +46,14 @@ class ProvinceTest extends TestCase
 
         $province = new Province("dummy_api_key");
         $res = $province->search("bali")->get();
+
         $this->assertContains("Bali", $res["results"][0]);
     }
 
     public function test_search_province_by_id()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -72,59 +66,64 @@ class ProvinceTest extends TestCase
         $this->assertContains("Bali", $res["results"][0]);
     }
 
-    public function test_custom_config_search_threshold()
+    public function test_search_with_custom_keys()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $province = new Province("dummy_api_key");
-        $res = $province->setSearchThreshold(10)->search(1)->get();
+        $key = ["custom"];
+        $province = new Province("dummy");
+        $res = $province->setSearchKeys($key)->search("test");
 
-        $this->assertEquals(10, $province->getSearchInstance()->getSearchThreshold());
+        $reflect = new ReflectionClass($province);
+        $prop = $reflect->getProperty("fuzzySearch");
+        $prop->setAccessible(true);
+
+        $fuse = $prop->getValue($province);
+        $reflect = new ReflectionClass($fuse);
+        
+        $prop = $reflect->getProperty("configurations");
+        $prop->setAccessible(true);
+
+        $this->assertEquals($key, $prop->getValue($fuse)["keys"]);
     }
 
-    public function test_custom_config_search_keys()
+    public function test_search_with_custom_threshold()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $province = new Province("dummy_api_key");
-        $res = $province->setSearchKeys(["name", "age"])->search(1)->get();
+        $threshold = 1;
+        $province = new Province("dummy");
+        $res = $province->setSearchThreshold($threshold)->search("test");
 
-        $this->assertEquals(["name", "age"], $province->getSearchInstance()->getSearchKeys());
-    }
+        $reflect = new ReflectionClass($province);
+        $prop = $reflect->getProperty("fuzzySearch");
+        $prop->setAccessible(true);
 
-    public function test_set_search_config()
-    {
-        $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
-        ]);
+        $fuse = $prop->getValue($province);
+        $reflect = new ReflectionClass($fuse);
+        
+        $prop = $reflect->getProperty("configurations");
+        $prop->setAccessible(true);
 
-        $handlerStack = HandlerStack::create($mock);
-
-        HttpClient::setConfig(["handler" => $handlerStack]);
-
-        $province = new Province("dummy_api_key");
-        $province->setSearchKeys(["name", "age"])->setSearchThreshold(10)->search(1)->get();
-
-        $this->assertEquals(["name", "age"], $province->getSearchInstance()->getSearchKeys());
-        $this->assertEquals(10, $province->getSearchInstance()->getSearchThreshold());
+        $this->assertEquals($threshold, $prop->getValue($fuse)["threshold"]);
     }
 
     public function test_first_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -141,7 +140,7 @@ class ProvinceTest extends TestCase
     public function test_last_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -159,7 +158,7 @@ class ProvinceTest extends TestCase
     public function test_count_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -175,7 +174,7 @@ class ProvinceTest extends TestCase
     public function test_get_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -191,7 +190,7 @@ class ProvinceTest extends TestCase
     public function test_nth_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/provinces.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -208,7 +207,7 @@ class ProvinceTest extends TestCase
     public function test_init_api_with_rajaongkir_wrapper()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/bali.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/bali.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);

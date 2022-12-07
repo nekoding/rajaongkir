@@ -1,6 +1,6 @@
 <?php
 
-namespace Nekoding\Tests;
+namespace Nekoding\Tests\Resources;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -15,7 +15,7 @@ class CostTest extends TestCase
     public function test_get_cost()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cost.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cost.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -37,7 +37,7 @@ class CostTest extends TestCase
     public function test_get_cost_with_array_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cost.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cost.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Nekoding\Tests;
+namespace Nekoding\Tests\Resources;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -9,6 +9,7 @@ use Nekoding\Rajaongkir\Resources\City;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\HttpClient;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class CityTest extends TestCase
 {
@@ -18,156 +19,155 @@ class CityTest extends TestCase
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        // make sure threshold back to default
-        FuzzySearch::setSearchThreshold(0.2);
-    }
-
     public function test_get_city_data_by_id()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/denpasar.json")),
+            new Response(200, [], file_get_contents(__DIR__ .  "/../mock/denpasar.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
+        $province = new City("dummy_api_key");
 
-        $res = $city->find(114);
-
+        $res = $province->find(114);
         $this->assertContains("Denpasar", $res["results"]);
     }
 
     public function test_search_city_by_name()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->search("Denpasar")->get();
+        $province = new City("dummy_api_key");
+        $res = $province->search("denpasar")->get();
+
         $this->assertContains("Denpasar", $res["results"][0]);
     }
 
     public function test_search_city_by_id()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->setSearchKeys(["city_id"])->search(114)->get();
+        $province = new City("dummy_api_key");
+        $res = $province->setSearchKeys(["city_id"])->search(114)->get();
 
         $this->assertContains("Denpasar", $res["results"][0]);
     }
 
-    public function test_custom_config_search_threshold()
+    public function test_search_with_custom_keys()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->setSearchThreshold(10)->search(1)->get();
+        $key = ["custom"];
+        $province = new City("dummy");
+        $res = $province->setSearchKeys($key)->search("test");
 
-        $this->assertEquals(10, $city->getSearchInstance()->getSearchThreshold());
+        $reflect = new ReflectionClass($province);
+        $prop = $reflect->getProperty("fuzzySearch");
+        $prop->setAccessible(true);
+
+        $fuse = $prop->getValue($province);
+        $reflect = new ReflectionClass($fuse);
+        
+        $prop = $reflect->getProperty("configurations");
+        $prop->setAccessible(true);
+
+        $this->assertEquals($key, $prop->getValue($fuse)["keys"]);
     }
 
-    public function test_custom_config_search_keys()
+    public function test_search_with_custom_threshold()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->setSearchKeys(["name", "age"])->search(1)->get();
+        $threshold = 1;
+        $province = new City("dummy");
+        $res = $province->setSearchThreshold($threshold)->search("test");
 
-        $this->assertEquals(["name", "age"], $city->getSearchInstance()->getSearchKeys());
-    }
+        $reflect = new ReflectionClass($province);
+        $prop = $reflect->getProperty("fuzzySearch");
+        $prop->setAccessible(true);
 
-    public function test_set_search_config()
-    {
-        $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
-        ]);
+        $fuse = $prop->getValue($province);
+        $reflect = new ReflectionClass($fuse);
+        
+        $prop = $reflect->getProperty("configurations");
+        $prop->setAccessible(true);
 
-        $handlerStack = HandlerStack::create($mock);
-
-        HttpClient::setConfig(["handler" => $handlerStack]);
-
-        $city = new City("dummy_api_key");
-        $city->setSearchKeys(["name", "age"])->setSearchThreshold(10)->search(1)->get();
-
-        $this->assertEquals(["name", "age"], $city->getSearchInstance()->getSearchKeys());
-        $this->assertEquals(10, $city->getSearchInstance()->getSearchThreshold());
+        $this->assertEquals($threshold, $prop->getValue($fuse)["threshold"]);
     }
 
     public function test_first_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->search("Denpasar")->first();
+        $province = new City("dummy_api_key");
+        $res = $province->search("denpasar")->first();
 
-        $this->assertArrayHasKey("city_name", $res["results"]);
+        $this->assertArrayHasKey("province", $res["results"]);
         $this->assertEquals("Denpasar", $res["results"]["city_name"]);
     }
 
     public function test_last_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
+        $province = new City("dummy_api_key");
 
-        $res = $city->search("buleleng")->last();
+        $res = $province->search("madiun")->last();
 
-        $this->assertArrayHasKey("city_name", $res["results"]);
-        $this->assertEquals("Buleleng", $res["results"]["city_name"]);
+        $this->assertArrayHasKey("province", $res["results"]);
+        $this->assertEquals("Madiun", $res["results"]["city_name"]);
     }
 
     public function test_count_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->search("Denpasar")->count();
+        $province = new City("dummy_api_key");
+        $res = $province->search("denpasar")->count();
 
         $this->assertEquals(1, $res);
     }
@@ -175,15 +175,15 @@ class CityTest extends TestCase
     public function test_get_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
-        $res = $city->search("Denpasar")->get();
+        $province = new City("dummy_api_key");
+        $res = $province->search("denpasar")->get();
 
         $this->assertEquals("Denpasar", $res["results"][0]["city_name"]);
     }
@@ -191,16 +191,16 @@ class CityTest extends TestCase
     public function test_nth_data()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/cities.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/cities.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
 
         HttpClient::setConfig(["handler" => $handlerStack]);
 
-        $city = new City("dummy_api_key");
+        $province = new City("dummy_api_key");
 
-        $res = $city->search("Denpasar")->nth(0);
+        $res = $province->search("denpasar")->nth(0);
 
         $this->assertEquals("Denpasar", $res["results"]["city_name"]);
     }
@@ -208,7 +208,7 @@ class CityTest extends TestCase
     public function test_init_api_with_rajaongkir_wrapper()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . "/mock/denpasar.json")),
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/denpasar.json")),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -218,7 +218,7 @@ class CityTest extends TestCase
         \Nekoding\Rajaongkir\Utils\Config::setApiKey("api_key");
         \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
 
-        $result = \Nekoding\Rajaongkir\Rajaongkir::city()->find(114);
+        $result = \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
 
         $this->assertContains("Denpasar", $result["results"]);
     }

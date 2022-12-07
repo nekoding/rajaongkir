@@ -3,55 +3,90 @@
 namespace Nekoding\Rajaongkir\Resources;
 
 use Nekoding\Rajaongkir\Contracts\IResponse;
+use Nekoding\Rajaongkir\Contracts\IResponseSearch;
 use Nekoding\Rajaongkir\Contracts\ISearch;
 use Nekoding\Rajaongkir\Contracts\ISearchOptions;
 use Nekoding\Rajaongkir\Utils\Config;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\HttpClient;
 
-abstract class AbstractApiResource implements ISearchOptions
+abstract class AbstractApiResource
 {
-    protected $searchEngine;
     protected $httpClient;
-
+    protected $fuzzySearch;
     protected $result;
     protected $searchKeys = [];
+    protected $wrapperDefaultKeys = "rajaongkir";
 
+
+    /**
+     * construct object
+     *
+     * @param string $apikey
+     * @param string $mode
+     */
     public function __construct(string $apikey, string $mode = "starter")
     {
         Config::setApiKey($apikey);
         Config::setApiMode($mode);
 
-        $this->searchEngine = new FuzzySearch();
-        $this->searchEngine::setSearchKeys($this->searchKeys);
+        $this->boot();
+    }
 
+    protected function boot()
+    {
         $this->httpClient = new HttpClient();
+
+        // init fuse with default keys
+        $fuzzySearch = new FuzzySearch();
+        $fuzzySearch->setKeys($this->searchKeys);
+
+        $this->fuzzySearch = $fuzzySearch;
     }
 
-    public function setSearch(ISearch $search): self
+    public function setSearchKeys(array $keys): self
     {
-        $this->searchEngine = $search;
+        $this->searchKeys = $keys;
+
+        if ($this->fuzzySearch instanceof ISearchOptions) {
+            $this->fuzzySearch->setKeys($keys);
+        }
+
         return $this;
     }
 
-    public function getSearchInstance(): ISearch
+    public function getSearchKeys(): array
     {
-        return $this->searchEngine;
+        return $this->searchKeys;
     }
 
-    public function setSearchKeys(array $keys): AbstractApiResource
+    public function setSearchThreshold(float $threshold): self
     {
-        $this->searchEngine::setSearchKeys($keys);
+        if ($this->fuzzySearch instanceof ISearchOptions) {
+            $this->fuzzySearch->setThreshold($threshold);
+        }
+
         return $this;
     }
 
-    public function setSearchThreshold(float $threshold): AbstractApiResource
+    public function getWrapperKeys(): string
     {
-        $this->searchEngine::setSearchThreshold($threshold);
-        return $this;
+        return $this->wrapperDefaultKeys;
     }
 
+    /**
+     * Find data by id
+     *
+     * @param int|string $search
+     * @return array
+     */
     public abstract function find($search): array;
 
-    public abstract function search($search): IResponse;
+    /**
+     * Search data by array keys
+     *
+     * @param string $search
+     * @return IResponseSearch
+     */
+    public abstract function search($search): IResponseSearch;
 }

@@ -6,21 +6,49 @@ use Nekoding\Rajaongkir\Resources\AbstractApiResource;
 
 interface ISearchOptions
 {
-
-    /**
-     * set search keys value
-     *
-     * @param   $keys
-     * @return AbstractApiResource
-     */
-    public function setSearchKeys(array $keys): AbstractApiResource;
     
     /**
-     * set search threshold value
+     * load search configuration
      *
-     * @param  float|int $threshold
-     * @return AbstractApiResource
+     * @param array $config
+     * @return self
      */
-    public function setSearchThreshold(float $threshold): AbstractApiResource;
+    public function setConfig(array $config): ISearch;
 
+    /**
+     * get search configuration
+     *
+     * @return array
+     */
+    public function getConfig(): array;
+
+    /**
+     * load search keys
+     *
+     * @param array $keys
+     * @return self
+     */
+    public function setKeys(array $keys): self;
+
+    /**
+     * get search keys
+     *
+     * @return array
+     */
+    public function getKeys(): array;
+
+    /**
+     * load search threshold
+     *
+     * @param float $threshold
+     * @return self
+     */
+    public function setThreshold(float $threshold): self;
+
+    /**
+     * get search threshold
+     *
+     * @return float
+     */
+    public function getThreshold(): float;
 }

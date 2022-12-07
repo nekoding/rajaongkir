@@ -12,6 +12,12 @@ abstract class AbstractApiTarif
     protected $result;
     protected $body;
 
+    /**
+     * construcy object
+     *
+     * @param string $apikey
+     * @param string $mode
+     */
     public function __construct(string $apikey, string $mode = "starter")
     {
         Config::setApiKey($apikey);
@@ -25,16 +31,32 @@ abstract class AbstractApiTarif
         ]);
     }
 
+    /**
+     * set data
+     *
+     * @param array $data
+     * @return self
+     */
     public function setData(array $data): self
     {
         $this->body = $data;
         return $this;
     }
 
+    /**
+     * get data
+     *
+     * @return array|null
+     */
     public function getData(): ?array
     {
         return $this->body;
     }
 
+    /**
+     * get api data
+     *
+     * @return array
+     */
     public abstract function get(): array;
 }

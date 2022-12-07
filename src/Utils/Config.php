@@ -5,6 +5,10 @@ namespace Nekoding\Rajaongkir\Utils;
 class Config
 {
 
+    const STARTER = "starter";
+    const BASIC = "basic";
+    const PRO = "pro";
+
     protected static $apiKey;
     protected static $apiMode = "starter";
 
