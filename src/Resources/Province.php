@@ -19,27 +19,29 @@ class Province extends AbstractApiResource
         $url = $this->httpClient->buildUrl("/province", ['id' => $provinceId]);
         $res = $this->httpClient->request('GET', $url)->getBody();
 
-        if ($res['rajaongkir']['status']['code'] != 200) {
-            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        $json = $res[$this->getWrapperKeys()];
+
+        if ($json["status"]["code"] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($json["status"]["description"]);
         }
 
-        return $res["rajaongkir"];
+        return $json;
     }
 
     public function search($search): IResponseSearch
     {
-        $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/province"))->getBody();
+        $url = $this->httpClient->buildUrl("/province");
+        $res = $this->httpClient->request("GET", $url)->getBody();
 
-        if ($res['rajaongkir']['status']['code'] != 200) {
-            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
+        $json = $res[$this->getWrapperKeys()];
+
+        if ($json["status"]["code"] != 200) {
+            throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($json["status"]["description"]);
         }
 
-        $fuzzySearch = new FuzzySearch();
-        $fuzzySearch->setKeys($this->searchKeys);
-
         return new SearchData(
-            $res["rajaongkir"],
-            $fuzzySearch,
+            $json["results"],
+            $this->fuzzySearch,
             $search
         );
     }

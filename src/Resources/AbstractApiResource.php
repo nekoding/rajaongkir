@@ -12,11 +12,12 @@ use Nekoding\Rajaongkir\Utils\HttpClient;
 
 abstract class AbstractApiResource
 {
-    protected $searchEngine;
     protected $httpClient;
-
+    protected $fuzzySearch;
     protected $result;
     protected $searchKeys = [];
+    protected $wrapperDefaultKeys = "rajaongkir";
+
 
     /**
      * construct object
@@ -29,10 +30,48 @@ abstract class AbstractApiResource
         Config::setApiKey($apikey);
         Config::setApiMode($mode);
 
-        $this->searchEngine = new FuzzySearch();
-        $this->searchEngine::setSearchKeys($this->searchKeys);
+        $this->boot();
+    }
 
+    protected function boot()
+    {
         $this->httpClient = new HttpClient();
+
+        // init fuse with default keys
+        $fuzzySearch = new FuzzySearch();
+        $fuzzySearch->setKeys($this->searchKeys);
+
+        $this->fuzzySearch = $fuzzySearch;
+    }
+
+    public function setSearchKeys(array $keys): self
+    {
+        $this->searchKeys = $keys;
+
+        if ($this->fuzzySearch instanceof ISearchOptions) {
+            $this->fuzzySearch->setKeys($keys);
+        }
+
+        return $this;
+    }
+
+    public function getSearchKeys(): array
+    {
+        return $this->searchKeys;
+    }
+
+    public function setSearchThreshold(float $threshold): self
+    {
+        if ($this->fuzzySearch instanceof ISearchOptions) {
+            $this->fuzzySearch->setThreshold($threshold);
+        }
+
+        return $this;
+    }
+
+    public function getWrapperKeys(): string
+    {
+        return $this->wrapperDefaultKeys;
     }
 
     /**

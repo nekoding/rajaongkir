@@ -1,6 +1,6 @@
 <?php
 
-namespace Nekoding\Tests;
+namespace Nekoding\Tests\Resources;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;

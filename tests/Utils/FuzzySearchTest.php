@@ -1,6 +1,6 @@
 <?php
 
-namespace Nekoding\Tests;
+namespace Nekoding\Tests\Utils;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
