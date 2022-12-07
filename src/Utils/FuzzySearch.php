@@ -3,8 +3,9 @@
 namespace Nekoding\Rajaongkir\Utils;
 
 use Nekoding\Rajaongkir\Contracts\ISearch;
+use Nekoding\Rajaongkir\Contracts\ISearchOptions;
 
-class FuzzySearch implements ISearch
+class FuzzySearch implements ISearch, ISearchOptions
 {
 
     protected $searchEngine;
@@ -22,6 +23,11 @@ class FuzzySearch implements ISearch
     public static function setSearchOptions(array $options)
     {
         self::$searchOptions = $options;
+    }
+
+    public static function getSearchOptions(): array
+    {
+        return self::$searchOptions;
     }
 
     public static function getSearchKeys(): array
@@ -44,9 +50,36 @@ class FuzzySearch implements ISearch
         self::$searchOptions["threshold"] = $threshold;
     }
 
-    public function loadSearchOptions(array $options): ISearch
+    public function setOptions(array $options): ISearch
     {
         self::$searchOptions = $options;
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return self::$searchOptions;
+    }
+
+    public function getKeys(): array
+    {
+        return self::$searchOptions["keys"];
+    }
+
+    public function setKeys(array $keys): ISearchOptions
+    {
+        self::$searchOptions["keys"] = $keys;
+        return $this;
+    }
+
+    public function getThreshold(): float
+    {
+        return self::$searchOptions["threshold"];
+    }
+
+    public function setThreshold(float $threshold): ISearchOptions
+    {
+        self::$searchOptions["threshold"] = $threshold;
         return $this;
     }
 

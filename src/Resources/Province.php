@@ -3,9 +3,11 @@
 namespace Nekoding\Rajaongkir\Resources;
 
 use Nekoding\Rajaongkir\Contracts\IResponse;
+use Nekoding\Rajaongkir\Contracts\IResponseSearch;
 use Nekoding\Rajaongkir\Contracts\ISearch;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\Response;
+use Nekoding\Rajaongkir\Utils\SearchData;
 
 class Province extends AbstractApiResource
 {
@@ -24,7 +26,7 @@ class Province extends AbstractApiResource
         return $res["rajaongkir"];
     }
 
-    public function search($search): IResponse
+    public function search($search): IResponseSearch
     {
         $res = $this->httpClient->request("GET", $this->httpClient->buildUrl("/province"))->getBody();
 
@@ -32,6 +34,13 @@ class Province extends AbstractApiResource
             throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($res['rajaongkir']['status']['description']);
         }
 
-        return new Response($res["rajaongkir"], $this->searchEngine, $search);
+        $fuzzySearch = new FuzzySearch();
+        $fuzzySearch->setKeys($this->searchKeys);
+
+        return new SearchData(
+            $res["rajaongkir"],
+            $fuzzySearch,
+            $search
+        );
     }
 }

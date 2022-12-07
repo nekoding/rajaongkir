@@ -3,13 +3,14 @@
 namespace Nekoding\Rajaongkir\Resources;
 
 use Nekoding\Rajaongkir\Contracts\IResponse;
+use Nekoding\Rajaongkir\Contracts\IResponseSearch;
 use Nekoding\Rajaongkir\Contracts\ISearch;
 use Nekoding\Rajaongkir\Contracts\ISearchOptions;
 use Nekoding\Rajaongkir\Utils\Config;
 use Nekoding\Rajaongkir\Utils\FuzzySearch;
 use Nekoding\Rajaongkir\Utils\HttpClient;
 
-abstract class AbstractApiResource implements ISearchOptions
+abstract class AbstractApiResource
 {
     protected $searchEngine;
     protected $httpClient;
@@ -17,6 +18,12 @@ abstract class AbstractApiResource implements ISearchOptions
     protected $result;
     protected $searchKeys = [];
 
+    /**
+     * construct object
+     *
+     * @param string $apikey
+     * @param string $mode
+     */
     public function __construct(string $apikey, string $mode = "starter")
     {
         Config::setApiKey($apikey);
@@ -28,30 +35,19 @@ abstract class AbstractApiResource implements ISearchOptions
         $this->httpClient = new HttpClient();
     }
 
-    public function setSearch(ISearch $search): self
-    {
-        $this->searchEngine = $search;
-        return $this;
-    }
-
-    public function getSearchInstance(): ISearch
-    {
-        return $this->searchEngine;
-    }
-
-    public function setSearchKeys(array $keys): AbstractApiResource
-    {
-        $this->searchEngine::setSearchKeys($keys);
-        return $this;
-    }
-
-    public function setSearchThreshold(float $threshold): AbstractApiResource
-    {
-        $this->searchEngine::setSearchThreshold($threshold);
-        return $this;
-    }
-
+    /**
+     * Find data by id
+     *
+     * @param int|string $search
+     * @return array
+     */
     public abstract function find($search): array;
 
-    public abstract function search($search): IResponse;
+    /**
+     * Search data by array keys
+     *
+     * @param string $search
+     * @return IResponseSearch
+     */
+    public abstract function search($search): IResponseSearch;
 }

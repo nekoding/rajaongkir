@@ -106,7 +106,7 @@ class FuzzySearchTest extends TestCase
     {
         $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
 
-        $fuzzySearch->loadSearchOptions([
+        $fuzzySearch->setOptions([
             "keys"      => ["load_options"],
             "threshold" => 90
         ]);
@@ -151,7 +151,7 @@ class FuzzySearchTest extends TestCase
         ];
 
         $fuse = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
-        $result = $fuse->loadSearchOptions($options)->setUp($list)->search("steve");
+        $result = $fuse->setOptions($options)->setUp($list)->search("steve");
 
         $this->assertCount(1, $result);
         $this->assertStringContainsString("Steve", $result[0]["item"]["author"]);

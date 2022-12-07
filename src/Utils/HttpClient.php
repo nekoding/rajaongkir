@@ -20,6 +20,11 @@ class HttpClient
 
     public function __construct()
     {
+        $this->boot();
+    }
+
+    public function boot()
+    {
         $this->httpClient = new \GuzzleHttp\Client(self::$config);
     }
 
