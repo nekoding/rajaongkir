@@ -13,115 +13,107 @@ class FuzzySearchTest extends TestCase
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        // make sure data rollback to default after test
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchOptions([
-            "keys"      => [],
-            "threshold" => 0.2
-        ]);
-    }
-
     public function test_initialize_fuzzy_search()
     {
         $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
 
-        $fuzzySearch->setUp();
+        $fuzzySearch->setUp([]);
 
         $reflection = new ReflectionClass($fuzzySearch);
 
-        $prop = $reflection->getProperty("searchEngine");
+        $prop = $reflection->getProperty("fuse");
 
         $prop->setAccessible(true);
 
         $this->assertInstanceOf(\Fuse\Fuse::class, $prop->getValue($fuzzySearch));
     }
 
-    public function test_set_search_options()
-    {
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchOptions([
-            "keys"      => ["xxx"],
-            "threshold" => 0.5
-        ]);
-
-        $this->assertEquals(["xxx"], \Nekoding\Rajaongkir\Utils\FuzzySearch::getSearchKeys());
-        $this->assertEquals(0.5, \Nekoding\Rajaongkir\Utils\FuzzySearch::getSearchThreshold());
-    }
-
     public function test_set_search_keys()
     {
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchKeys(["testing"]);
-
         $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
+
+        $fuzzySearch->setKeys(["testing"]);
 
         $reflection = new ReflectionClass($fuzzySearch);
 
-        $prop = $reflection->getProperty("searchOptions");
+        $prop = $reflection->getProperty("configurations");
 
         $prop->setAccessible(true);
 
-        $searchOptions = $prop->getValue($fuzzySearch);
+        $config = $prop->getValue($fuzzySearch);
 
-        $this->assertEquals(["testing"], $searchOptions["keys"]);
+        $this->assertEquals(["testing"], $config["keys"]);
     }
 
     public function test_get_search_keys()
     {
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchKeys(["testing_get_search"]);
+        $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
 
-        $this->assertEquals(
-            ["testing_get_search"],
-            \Nekoding\Rajaongkir\Utils\FuzzySearch::getSearchKeys()
-        );
+        $fuzzySearch->setKeys(["testing1"]);
+
+        $this->assertEquals(["testing1"], $fuzzySearch->getKeys());
     }
 
     public function test_set_search_threshold()
     {
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchThreshold(100);
-
         $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
+
+        $fuzzySearch->setThreshold(5);
 
         $reflection = new ReflectionClass($fuzzySearch);
 
-        $prop = $reflection->getProperty("searchOptions");
+        $prop = $reflection->getProperty("configurations");
 
         $prop->setAccessible(true);
 
-        $searchOptions = $prop->getValue($fuzzySearch);
+        $config = $prop->getValue($fuzzySearch);
 
-        $this->assertEquals(100, $searchOptions["threshold"]);
+        $this->assertEquals(5, $config["threshold"]);
     }
 
     public function test_get_search_threshold()
     {
-        \Nekoding\Rajaongkir\Utils\FuzzySearch::setSearchThreshold(50);
+        $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
 
-        $this->assertEquals(
-            50,
-            \Nekoding\Rajaongkir\Utils\FuzzySearch::getSearchThreshold()
-        );
+        $fuzzySearch->setThreshold(10);
+
+        $this->assertEquals(10, $fuzzySearch->getThreshold());
     }
 
-    public function test_load_search_options()
+    public function test_set_search_config()
     {
         $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
 
-        $fuzzySearch->setOptions([
-            "keys"      => ["load_options"],
-            "threshold" => 90
-        ]);
+        $fake = [
+            "keys" => ["dummy"],
+            "threshold" => 1
+        ];
+
+        $fuzzySearch->setConfig($fake);
 
         $reflection = new ReflectionClass($fuzzySearch);
 
-        $prop = $reflection->getProperty("searchOptions");
+        $prop = $reflection->getProperty("configurations");
 
         $prop->setAccessible(true);
 
-        $searchOptions = $prop->getValue($fuzzySearch);
+        $config = $prop->getValue($fuzzySearch);
 
-        $this->assertEquals(["load_options"], $searchOptions["keys"]);
+        $this->assertEquals($fake, $config);
+    }
 
-        $this->assertEquals(90, $searchOptions["threshold"]);
+    public function test_get_search_config()
+    {
+        $fuzzySearch = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
+
+        $fake = [
+            "keys" => ["dummy"],
+            "threshold" => 1
+        ];
+
+        $fuzzySearch->setConfig($fake);
+
+        $this->assertEquals($fake, $fuzzySearch->getConfig());
     }
 
     public function test_search_data()
@@ -151,7 +143,7 @@ class FuzzySearchTest extends TestCase
         ];
 
         $fuse = new \Nekoding\Rajaongkir\Utils\FuzzySearch();
-        $result = $fuse->setOptions($options)->setUp($list)->search("steve");
+        $result = $fuse->setConfig($options)->setUp($list)->search("steve");
 
         $this->assertCount(1, $result);
         $this->assertStringContainsString("Steve", $result[0]["item"]["author"]);
