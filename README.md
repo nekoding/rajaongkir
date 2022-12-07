@@ -47,6 +47,15 @@ $result = $cost->get();
 
 Untuk contoh lainnya cek folder `examples` atau `tests`
 
+### Default Value
+
+| Property    | Value       | 
+| ----------- | ----------- |
+| `fuse threshold` | `0.2`       | 
+| `api mode`  | `starter`   |
+| `province search keys`  | `province`   |
+| `city search keys`  | `city_name`   |
+
 ### Testing
 
 ```bash
