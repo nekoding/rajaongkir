@@ -40,15 +40,15 @@ class HttpClient
         }
 
         switch (Config::getApiMode()) {
-            case "starter":
+            case Config::STARTER:
                 $url = sprintf("%s/%s", self::STARTER_BASE_URL, $endpoint);
                 break;
 
-            case "basic":
+            case Config::BASIC:
                 $url = sprintf("%s/%s", self::BASIC_BASE_URL, $endpoint);
                 break;
 
-            case "pro":
+            case Config::PRO:
                 $url = sprintf("%s/%s", self::PRO_BASE_URL, $endpoint);
                 break;
 
