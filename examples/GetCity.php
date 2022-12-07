@@ -17,7 +17,7 @@ $city->find(114); //
 $city->search("bali")->get();
 
 // jika ingin melakukan custom config search
-$city->setSearchKeys(["city_id"])->setSearchThreshold(20)->search("bali")->get();
+$city->setSearchThreshold(1)->setSearchKeys(["city_name"])->search("bali");
 
 // jika inging menampilkan 1 data pertama dari hasil pencarian
 $city->search("buleleng")->first();

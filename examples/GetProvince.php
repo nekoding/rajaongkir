@@ -18,7 +18,7 @@ $province->find(1); //
 $province->search("bali")->get();
 
 // jika ingin melakukan custom config search
-$province->setSearchKeys(["province"])->setSearchThreshold(20)->search("bali")->get();
+$city->setSearchThreshold(1)->setSearchKeys(["province"])->search("bali");
 
 // jika inging menampilkan 1 data pertama dari hasil pencarian
 $province->search("kalimantan")->first();
