@@ -71,7 +71,7 @@ composer test
 
 - [x] Starter API (Province, City, Cost)
 - [x] Get data by province_name, city_name (using PHP Fuse)
-- [x] Support PHP 7.4, PHP 8.0, PHP 8.1
+- [x] Support PHP 7.4, PHP 8.0, PHP 8.1, PHP 8.2
 
 ### TODO
 
