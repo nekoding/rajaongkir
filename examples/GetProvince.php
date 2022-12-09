@@ -14,6 +14,9 @@ $province = new Province("apikey", "starter");
 // ambil data berdasarkan id provinsi
 $province->find(1); // 
 
+// ambil semua data
+$province->get();
+
 // ambil data berdasarkan nama provinsi (default: province)
 $province->search("bali")->get();
 

@@ -221,4 +221,20 @@ class ProvinceTest extends TestCase
 
         $this->assertContains("Bali", $result["results"]);
     }
+
+    public function test_get_province()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ . "/../mock/provinces.json")),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        HttpClient::setConfig(["handler" => $handlerStack]);
+
+        $province = new Province("dummy_api_key");
+        $res = $province->get();
+
+        $this->assertContains("Bali", array_column($res["results"], "province"));
+    }
 }

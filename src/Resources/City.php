@@ -2,9 +2,7 @@
 
 namespace Nekoding\Rajaongkir\Resources;
 
-use Nekoding\Rajaongkir\Contracts\IResponse;
 use Nekoding\Rajaongkir\Contracts\IResponseSearch;
-use Nekoding\Rajaongkir\Utils\Response;
 use Nekoding\Rajaongkir\Utils\SearchData;
 
 class City extends AbstractApiResource
@@ -26,7 +24,7 @@ class City extends AbstractApiResource
         return $json;
     }
 
-    public function search($search): IResponseSearch
+    public function get(): array
     {
         $url = $this->httpClient->buildUrl("/city");
         $res = $this->httpClient->request("GET", $url)->getBody();
@@ -37,8 +35,15 @@ class City extends AbstractApiResource
             throw new \Nekoding\Rajaongkir\Exceptions\RajaongkirException($json["status"]["description"]);
         }
 
+        return $json;
+    }
+
+    public function search($search): IResponseSearch
+    {
+        $data = $this->get();
+
         return new SearchData(
-            $json["results"],
+            $data["results"],
             $this->fuzzySearch,
             $search
         );

@@ -13,6 +13,9 @@ $city = new City("apikey", "starter");
 // ambil data berdasarkan id kota
 $city->find(114); // 
 
+// ambil semua data
+$city->get();
+
 // ambil data berdasarkan nama kota (default: city_name)
 $city->search("bali")->get();
 

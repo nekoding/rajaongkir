@@ -222,4 +222,20 @@ class CityTest extends TestCase
 
         $this->assertContains("Denpasar", $result["results"]);
     }
+
+    public function test_get_cities()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ .  "/../mock/cities.json")),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        HttpClient::setConfig(["handler" => $handlerStack]);
+
+        $province = new City("dummy_api_key");
+
+        $res = $province->get();
+        $this->assertContains("Denpasar", array_column($res["results"], "city_name"));
+    }
 }
