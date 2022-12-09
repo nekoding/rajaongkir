@@ -81,6 +81,13 @@ abstract class AbstractApiResource
      * @return array
      */
     public abstract function find($search): array;
+    
+    /**
+     * Get all data
+     *
+     * @return array
+     */
+    public abstract function get(): array;
 
     /**
      * Search data by array keys

@@ -24,11 +24,13 @@ composer require nekoding/rajaongkir
 // Menggunakan class resource
 $province = new \Nekoding\Rajaongkir\Resources\Province("api_key_rajaongkir", "api_mode");
 $province->find(1);
+$province->get();
 
 // Menggunakan wrapper class rajaongkir
 \Nekoding\Rajaongkir\Utils\Config::setApiKey("api_key_rajaongkir");
 \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
 $rajaongkir = new \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
+$rajaongkir = new \Nekoding\Rajaongkir\Rajaongkir::province()->get();
 
 // Jika ingin melakukan pencarian data berdasarkan nama provinsi
 $province = new \Nekoding\Rajaongkir\Resources\Province("api_key_rajaongkir", "api_mode");
