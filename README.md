@@ -6,6 +6,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/nekoding/rajaongkir.svg?style=flat-square)](https://packagist.org/packages/nekoding/rajaongkir)
 [![Total Downloads](https://img.shields.io/packagist/dt/nekoding/rajaongkir.svg?style=flat-square)](https://packagist.org/packages/nekoding/rajaongkir)
 ![GitHub Actions](https://github.com/nekoding/rajaongkir/actions/workflows/main.yml/badge.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/nekoding/rajaongkir/badge)](https://www.codefactor.io/repository/github/nekoding/rajaongkir)
 
 Library PHP sederhana untuk konek ke API Rajaongkir. Projek ini terinspirasi dari [https://github.com/kavist/rajaongkir](https://github.com/kavist/rajaongkir)
 
