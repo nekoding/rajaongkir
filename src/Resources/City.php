@@ -10,9 +10,14 @@ class City extends AbstractApiResource
 
     protected $searchKeys = ["city_name"];
 
-    public function find($provinceId): array
+    public function find($params): array
     {
-        $url = $this->httpClient->buildUrl("/city", ['id' => $provinceId]);
+        if (is_array($params)) {
+            $url = $this->httpClient->buildUrl("/city", $params);
+        } else {
+            $url = $this->httpClient->buildUrl("/city", ['id' => $params]);
+        }
+
         $res = $this->httpClient->request('GET', $url)->getBody();
 
         $json = $res[$this->getWrapperKeys()];

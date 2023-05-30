@@ -1,6 +1,9 @@
 # Rajaongkir PHP
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/nekoding/rajaongkir.svg?style=flat-square)](https://packagist.org/packages/nekoding/rajaongkir)
@@ -30,8 +33,8 @@ $province->get();
 // Menggunakan wrapper class rajaongkir
 \Nekoding\Rajaongkir\Utils\Config::setApiKey("api_key_rajaongkir");
 \Nekoding\Rajaongkir\Utils\Config::setApiMode("starter");
-$rajaongkir = new \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
-$rajaongkir = new \Nekoding\Rajaongkir\Rajaongkir::province()->get();
+$rajaongkir = \Nekoding\Rajaongkir\Rajaongkir::province()->find(1);
+$rajaongkir = \Nekoding\Rajaongkir\Rajaongkir::province()->get();
 
 // Jika ingin melakukan pencarian data berdasarkan nama provinsi
 $province = new \Nekoding\Rajaongkir\Resources\Province("api_key_rajaongkir", "api_mode");
@@ -55,12 +58,12 @@ Untuk contoh lainnya cek folder `examples` atau `tests`
 
 ### Default Value
 
-| Property    | Value       | 
-| ----------- | ----------- |
-| `fuse threshold` | `0.2`       | 
-| `api mode`  | `starter`   |
-| `province search keys`  | `province`   |
-| `city search keys`  | `city_name`   |
+| Property               | Value       |
+| ---------------------- | ----------- |
+| `fuse threshold`       | `0.2`       |
+| `api mode`             | `starter`   |
+| `province search keys` | `province`  |
+| `city search keys`     | `city_name` |
 
 ### Testing
 

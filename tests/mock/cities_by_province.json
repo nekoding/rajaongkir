@@ -1,0 +1,53 @@
+{
+    "rajaongkir": {
+        "query": {
+            "province": "5"
+        },
+        "status": {
+            "code": 200,
+            "description": "OK"
+        },
+        "results": [
+            {
+                "city_id": "39",
+                "province_id": "5",
+                "province": "DI Yogyakarta",
+                "type": "Kabupaten",
+                "city_name": "Bantul",
+                "postal_code": "55715"
+            },
+            {
+                "city_id": "135",
+                "province_id": "5",
+                "province": "DI Yogyakarta",
+                "type": "Kabupaten",
+                "city_name": "Gunung Kidul",
+                "postal_code": "55812"
+            },
+            {
+                "city_id": "210",
+                "province_id": "5",
+                "province": "DI Yogyakarta",
+                "type": "Kabupaten",
+                "city_name": "Kulon Progo",
+                "postal_code": "55611"
+            },
+            {
+                "city_id": "419",
+                "province_id": "5",
+                "province": "DI Yogyakarta",
+                "type": "Kabupaten",
+                "city_name": "Sleman",
+                "postal_code": "55513"
+            },
+            {
+                "city_id": "501",
+                "province_id": "5",
+                "province": "DI Yogyakarta",
+                "type": "Kota",
+                "city_name": "Yogyakarta",
+                "postal_code": "55111"
+            }
+        ]
+    }
+}

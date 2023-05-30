@@ -52,6 +52,29 @@ class RajaongkirTest extends TestCase
         $this->assertContains("Denpasar", $res["results"]);
     }
 
+    public function test_get_city_list_by_province_id()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ .  "/mock/cities_by_province.json")),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        HttpClient::setConfig(["handler" => $handlerStack]);
+
+        // setup rajaonkir config
+        \Nekoding\Rajaongkir\Utils\Config::setApiKey("xxx");
+        \Nekoding\Rajaongkir\Utils\Config::setApiKey("basic");
+
+        $city = Rajaongkir::city();
+
+        $res = $city->find([
+            'province' => 5,
+        ]);
+
+        $this->assertContains("DI Yogyakarta", $res["results"][0]);
+    }
+
     public function test_get_cost()
     {
         $mock = new MockHandler([
@@ -73,5 +96,4 @@ class RajaongkirTest extends TestCase
 
         $this->assertEquals("Denpasar", $result["destination_details"]["city_name"]);
     }
-
 }
