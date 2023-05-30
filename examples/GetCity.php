@@ -13,6 +13,12 @@ $city = new City("apikey", "starter");
 // ambil data berdasarkan id kota
 $city->find(114); // 
 
+// ambil data berdasarkan id provinsi dan id kota
+$city->find(['province' => 5]);
+
+// ambil data berdasarkan id provinsi dan id kota
+$city->find(['province' => 5, 'id' => 39]);
+
 // ambil semua data
 $city->get();
 
