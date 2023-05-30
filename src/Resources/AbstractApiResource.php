@@ -77,11 +77,11 @@ abstract class AbstractApiResource
     /**
      * Find data by id
      *
-     * @param int|string $search
+     * @param int|string|array $search
      * @return array
      */
     public abstract function find($search): array;
-    
+
     /**
      * Get all data
      *
